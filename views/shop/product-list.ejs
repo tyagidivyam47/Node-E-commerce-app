@@ -15,7 +15,7 @@
                                 <h1 class="product__title"><%= product.title %></h1>
                             </header>
                             <div class="card__image">
-                                <img src="<%= product.imgUrl %>"
+                                <img src="<%= product.imageUrl %>"
                                     alt="<%= product.title %>">
                             </div>
                             <div class="card__content">
@@ -23,10 +23,10 @@
                                 <p class="product__description"><%= product.description %></p>
                             </div>
                             <div class="card__actions">
-                                <a href="/products/<%= product.id %>" class="btn">Details</a>
+                                <a href="/products/<%= product._id %>" class="btn">Details</a>
                                 <form action="/cart" method="post">
                                     <button type="submit" class="btn">Add to Cart</button>
-                                    <input type="hidden" name="productId" value="<%= product.id %>" >
+                                    <input type="hidden" name="productId" value="<%= product._id %>" >
                                 </form>
                             </div>
                         </article>

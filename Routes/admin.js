@@ -12,9 +12,9 @@ const route = express.Router();
 
 route.get("/add-product", adminController.getAddProducts);
 
-route.get("/admin/products", adminController.getProducts)
+route.get("/admin/products", adminController.getProducts);
 
-// /admin/add-product => POST
+// // /admin/add-product => POST
 route.post("/add-product", adminController.postAddProducts);
 
 route.get("/edit-product/:productId", adminController.getEditProduct);

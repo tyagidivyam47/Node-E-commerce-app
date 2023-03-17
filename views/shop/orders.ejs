@@ -4,6 +4,22 @@
     <body>
         <%- include('../includes/navigation.ejs') %>
         <main>
-            <h1>Nothing there!</h1>
+            <% if (orders.length <= 0) { %>
+                <h1>Nothing there!</h1>
+            <% } else { %>
+                <ul>
+                    <% orders.forEach(order => { %>
+                        <!-- <%console.log("From view",order.products) %> -->
+                        <li>
+                            <h1># <%= order._id %></h1>
+                            <ul>
+                                <% order.products.forEach(p => { %>
+                                    <li><%= p.product.title %> (<%= p.quantity %>)</li>
+                                <% }); %>
+                            </ul>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
         </main>
         <%- include('../includes/end.ejs') %>
