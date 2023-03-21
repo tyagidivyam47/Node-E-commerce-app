@@ -24,10 +24,12 @@
                             </div>
                             <div class="card__actions">
                                 <a href="/products/<%= product._id %>" class="btn">Details</a>
+                                <% if(isAuthenticated){ %>
                                 <form action="/cart" method="post">
                                     <button type="submit" class="btn">Add to Cart</button>
                                     <input type="hidden" name="productId" value="<%= product._id %>" >
                                 </form>
+                                <% } %>
                             </div>
                         </article>
                     <% } %>

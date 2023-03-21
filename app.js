@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const adminRoutes = require("./routes/admin");
@@ -9,8 +11,7 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./Routes/auth");
 const User = require("./models/user");
 
-mongoose.set('strictQuery', true);  // To Suppress the strictQuery warning
-
+mongoose.set("strictQuery", true); // To Suppress the strictQuery warning
 
 // const mongoConnect = require("./util/database").mongoConnect;
 // const sequelize = require("./util/database");
@@ -22,34 +23,57 @@ mongoose.set('strictQuery', true);  // To Suppress the strictQuery warning
 // const OrderItem = require("./models/order-item");
 // const db = require("./util/database");
 
+const MONGODB_URI =
+  "mongodb+srv://divyamtyagi:2104@cluster0.cqshg4z.mongodb.net/shop?retryWrites=true&w=majority";
+
 const app = express();
+
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 // app.set("view engine", "pug");
 app.set("view engine", "ejs");
 app.set("views", "views");
 
+// app.use((req, res, next) => {
+
+//   // Using Sequelize
+
+//   // User.findByPk(1)
+//   //   .then((user) => {
+//   //     req.user = user;
+//   //     next();
+//   //   })
+//   //   .catch((err) => console.log(err));
+//   // next();
+// });
+
+// Registered Middlewares
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
 
 app.use((req, res, next) => {
-  User.findById("6403522feb37056019606356")
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
     })
     .catch((err) => console.log(err));
-
-  // Using Sequelize
-
-  // User.findByPk(1)
-  //   .then((user) => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch((err) => console.log(err));
-  // next();
 });
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use(adminRoutes);
 app.use(shopRoutes);
@@ -60,9 +84,7 @@ app.use((req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://divyamtyagi:2104@cluster0.cqshg4z.mongodb.net/shop?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {

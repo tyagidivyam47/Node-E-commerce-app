@@ -1,1 +1,4 @@
-exports.getErrorPage = {pageTitle:"Page not Found", path:"error"}
+exports.getErrorPage = {
+  pageTitle: "Page not Found",
+  path: "error",
+};
