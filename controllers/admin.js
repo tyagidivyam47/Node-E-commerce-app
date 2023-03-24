@@ -5,7 +5,7 @@ const Product = require("../models/product");
 exports.getAddProducts = (req, res, next) => {
   res.render("admin/add-product", {
     pageTitle: "Add Product",
-    path: "/admin/add-product",
+    path: "/add-product",
     formsCSS: true,
     productCSS: true,
     activeAddProduct: true,

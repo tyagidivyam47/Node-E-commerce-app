@@ -18,7 +18,7 @@
                 </li>
 
                 <li class="main-header__item">
-                    <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="admin/add-product">Add Product
+                    <a class="<%= path === '/add-product' ? 'active' : '' %>" href="/add-product">Add Product
                     </a>
                 </li>
                 <li class="main-header__item">
@@ -31,7 +31,10 @@
         <ul class="main-header__item-list">
             <% if(!isAuthenticated){ %>
                 <li class="main-header__item">
-                    <a href="/login">Login</a>
+                    <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
                 </li>
             <% } %>
 
@@ -61,7 +64,7 @@
             <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
         </li>
         <li class="mobile-nav__item">
-            <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product
+            <a class="<%= path === '/add-product' ? 'active' : '' %>" href="/add-product">Add Product
             </a>
         </li>
         <li class="mobile-nav__item">

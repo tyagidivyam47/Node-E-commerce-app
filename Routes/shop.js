@@ -2,6 +2,7 @@ const express = require("express");
 // const path = require("path");
 
 const shopController = require("../controllers/shop");
+const isAuth = require("../middleware/is-auth");
 
 // const adminData = require("./admin");
 // const rootDir = require("../util/path");
@@ -13,16 +14,16 @@ route.get("/products", shopController.getProducts);
 
 route.get("/products/:productId", shopController.getProductDetail);
 
-route.get("/cart", shopController.getCart);
+route.get("/cart", isAuth, shopController.getCart);
 
-route.post("/cart", shopController.postCart);
+route.post("/cart", isAuth, shopController.postCart);
 
-route.get("/orders", shopController.getOrders);
+route.get("/orders", isAuth, shopController.getOrders);
 
-// // route.get("/checkout", shopController.getCheckout);
+// route.get("/checkout", isAuth, shopController.getCheckout);
 
-route.post("/cart-delete-item", shopController.postCartDeleteProduct);
+route.post("/cart-delete-item", isAuth, shopController.postCartDeleteProduct);
 
-route.post("/create-order", shopController.postOrder);
+route.post("/create-order", isAuth, shopController.postOrder);
 
 module.exports = route;
