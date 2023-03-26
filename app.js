@@ -4,11 +4,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const flash = require('connect-flash');
 
 const errorController = require("./controllers/error");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-const authRoutes = require("./Routes/auth");
+const authRoutes = require("./routes/auth");
 const User = require("./models/user");
 
 mongoose.set("strictQuery", true); // To Suppress the strictQuery warning
@@ -62,6 +63,8 @@ app.use(
     store: store,
   })
 );
+
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {

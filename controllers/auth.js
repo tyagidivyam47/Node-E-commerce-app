@@ -4,11 +4,19 @@ const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
   // const isLoggedIn = req.get("Cookie").split(";")[1].trim().split("=")[1];
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  }
+  else {
+    message = null;
+  }
   const isLoggedIn = req.session.isLoggedIn;
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
     isAuthenticated: false,
+    errorMessage: message
   });
 };
 
@@ -21,6 +29,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
+        req.flash('error', 'Invalid Email or Password');
         return res.redirect("/login");
       }
       const doMatch = bcrypt.compareSync(password, user.password);
@@ -48,10 +57,18 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  }
+  else {
+    message = null;
+  }
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
     isAuthenticated: false,
+    errorMessage: message
   });
 };
 
@@ -63,6 +80,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
+        req.flash('error', 'Email already Exists')
         return res.redirect("/signup");
       }
 
