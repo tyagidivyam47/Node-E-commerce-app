@@ -1,6 +1,18 @@
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
+
+let transporter = nodemailer.createTransport({
+  // host: "live.smtp.mailtrap.io",
+  service: "gmail",
+  // port: 587,
+  // secure: false, // true for 465, false for other ports
+  auth: {
+    user: "tyagidivyam21@gmail.com", // generated ethereal user
+    pass: "luatdvejuhindnfr", // generated ethereal password
+  },
+});
 
 exports.getLogin = (req, res, next) => {
   // const isLoggedIn = req.get("Cookie").split(";")[1].trim().split("=")[1];
@@ -94,8 +106,18 @@ exports.postSignup = (req, res, next) => {
 
       return user.save();
     })
-    .then((result) => {
+    .then(() => {
       res.redirect("/login");
+      return transporter.sendMail({
+        from: "Fred Foo 👻", // sender address
+        to: email, // list of receivers
+        subject: "Account Created ✔", // Subject line
+        text: "Your account has been successfully created", // plain text body
+        html: "<b>Your account has been successfully created</b>", // html body
+      })
+    })
+    .then((result)=>{
+      console.log(result);
     })
     .catch((err) => {
       console.log(err);
