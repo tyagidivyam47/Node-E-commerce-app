@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Product = require("../models/product");
 
 // const mongodb = require("mongodb");
@@ -10,15 +11,37 @@ exports.getAddProducts = (req, res, next) => {
     productCSS: true,
     activeAddProduct: true,
     isAuthenticated: req.session.isLoggedIn,
+    errorMessage: ""
   });
 };
 
 exports.postAddProducts = (req, res, next) => {
   // console.log(req.body);
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const description = req.body.description;
   const price = req.body.price;
+  const errors = validationResult(req);
+
+  if (!image) {
+    return res.status(422).render("admin/add-product", {
+      path: "/add-product",
+      pageTitle: "Add Product",
+      isAuthenticated: true,
+      errorMessage: 'Attached file is not an image'
+    });
+  }
+  // console.log(errors.array()[0])
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/add-product", {
+      path: "/add-product",
+      pageTitle: "Add Product",
+      isAuthenticated: true,
+      errorMessage: errors.array()[0].msg
+    });
+  }
+
+  const imageUrl = image.path;
 
   const product = new Product({
     title: title,
@@ -33,10 +56,13 @@ exports.postAddProducts = (req, res, next) => {
   product
     .save()
     .then((result) => {
-      console.log(result);
+      // console.log(result);
       res.redirect("/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.redirect("/500")
+      console.log("dfasudfb : ", err);
+    });
 
   // With Sequelize
 
@@ -92,7 +118,7 @@ exports.postAddProducts = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     .then((products) => {
       res.render("admin/products", {
         prods: products,
@@ -188,22 +214,37 @@ exports.postEditProducts = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedImgUrl = req.body.imageUrl;
+  const updatedImg = req.file;
   const updatedDescription = req.body.description;
+
+  // console.log('rfed : ', updatedImgUrl )
 
   Product.findById(prodId)
     .then((product) => {
+
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
-      product.imageUrl = updatedImgUrl;
+
+      if (updatedImg) {
+        product.imageUrl = updatedImg.path;
+      }
       return product.save();
     })
     .then(() => {
       console.log("Updated Product!");
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+
+      // res.redirect("/500");
+      console.log(err);
+      // console.log(err);
+      res.redirect("/500")
+    });
 
   // Using mongoDB
 
@@ -255,14 +296,18 @@ exports.postEditProducts = (req, res, next) => {
   //   res.redirect("/admin/products");
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+  const prodId = req.params.productId;
 
-  Product.findByIdAndDelete(prodId)
+  Product.findByIdAndDelete(prodId, { userId: req.user._id })
     .then(() => {
-      res.redirect("/admin/products");
+      res.status(200).json({ message: "Success!" })
+      // res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err)
+      res.status(400).json({ message: "Product Deleting Failed" })
+    });
 
   // Using mongoDB
 

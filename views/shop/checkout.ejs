@@ -1,9 +1,44 @@
-<%- include("../includes/head.ejs") %>
-    <link rel="stylesheet" href="/css/product.css">
-</head>
+<%- include('../includes/head.ejs') %>
+  <link rel="stylesheet" href="/css/cart.css">
+  </head>
 
-<body>
+  <body>
     <%- include('../includes/navigation.ejs') %>
+      <main>
+        <ul class="cart__item-list">
+          <% products.forEach(p=> { %>
+            <li class="cart__item">
+              <h1>
+                <%= p.productId.title %>
+              </h1>
+              <h2>Quantity: <%= p.quantity %>
+              </h2>
 
-   
-<%- include('../includes/end.ejs') %>
+            </li>
+            <% }) %>
+        </ul>
+        <hr>
+        <div class="centered">
+          <!-- <form action="/create-order" method="POST">
+              <button type="submit" class="btn">Order Now!</button>
+            </form> -->
+          <h1>Total Sum : <%= totalSum %>
+          </h1>
+
+        </div>
+
+        <div class="centered">
+          <button id="order-btn" class="btn">ORDER</button>
+          <script src="https://js.stripe.com/v3/"></script>
+          <script>
+            var stripe = Stripe('pk_test_51N5kQ7SDjOf0xQq41Sx107yiphXd2Na1E17VJVBJFsWjF2IwnMYFSziySf1S55hW8j0Utc6JW1P4skG7aNohqs8M00gOuT3LWh');
+            const orderBtn = document.getElementById('order-btn');
+            orderBtn.addEventListener('click', function(){
+              stripe.redirectToCheckout({
+                sessionId:"<%= sessionId  %>"
+              })
+            })
+          </script>
+        </div>
+      </main>
+      <%- include('../includes/end.ejs') %>
